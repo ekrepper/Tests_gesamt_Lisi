@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.signal as sc
 import Lab3Functions as lf3
-
+import os
 
 #Importieren der Daten
 weights, mvc, fatigue = lf3.import_data('\t')
@@ -65,9 +65,50 @@ plt.ion()
 plt.plot(mvc['t'], mvc_emg_filtered)
 plt.show()
 
-mvc_s, mvc_e, weights_s, weights_e, fatigue_s, fatigue_e = lf3.get_bursts(mvc_emg_filtered, weights_emg_filtered, fatigue_emg_filtered)
 
-print(mvc_s, mvc_e, weights_s, weights_e, fatigue_s, fatigue_e)
+# Pfade für die .npy-Dateien
+files = {
+    "mvc_s": "mvc_s.npy",
+    "mvc_e": "mvc_e.npy",
+    "weights_s": "weights_s.npy",
+    "weights_e": "weights_e.npy",
+    "fatigue_s": "fatigue_s.npy",
+    "fatigue_e": "fatigue_e.npy",
+}
+
+# Funktion zum Laden der Arrays
+def load_or_compute_bursts():
+    # Prüfen, ob alle Dateien existieren
+    if all(os.path.exists(files[key]) for key in files):
+        # Alle Dateien existieren, Arrays laden
+        print("Lade gespeicherte Burst-Daten...")
+        mvc_s = np.load(files["mvc_s"])
+        mvc_e = np.load(files["mvc_e"])
+        weights_s = np.load(files["weights_s"])
+        weights_e = np.load(files["weights_e"])
+        fatigue_s = np.load(files["fatigue_s"])
+        fatigue_e = np.load(files["fatigue_e"])
+    else:
+        # Dateien existieren nicht, get_bursts aufrufen
+        print("Berechne Burst-Daten interaktiv...")
+        mvc_s, mvc_e, weights_s, weights_e, fatigue_s, fatigue_e = lf3.get_bursts(
+            mvc_emg_filtered, weights_emg_filtered, fatigue_emg_filtered
+        )
+
+        # Ergebnisse speichern
+        np.save(files["mvc_s"], mvc_s)
+        np.save(files["mvc_e"], mvc_e)
+        np.save(files["weights_s"], weights_s)
+        np.save(files["weights_e"], weights_e)
+        np.save(files["fatigue_s"], fatigue_s)
+        np.save(files["fatigue_e"], fatigue_e)
+        print("Burst-Daten wurden gespeichert.")
+
+    return mvc_s, mvc_e, weights_s, weights_e, fatigue_s, fatigue_e
+
+# Aufruf der Funktion
+mvc_s, mvc_e, weights_s, weights_e, fatigue_s, fatigue_e = load_or_compute_bursts()
+
 
 mvc_elisabeth = np.mean(np.mean(mvc_envelope[mvc_s[0]:mvc_e[0]]) + np.mean(mvc_envelope[mvc_s[1]:mvc_e[1]]) + np.mean(mvc_envelope[mvc_s[2]:mvc_e[2]]))
 print(mvc_elisabeth)
@@ -109,6 +150,8 @@ time_start = fatigue['t'][fatigue_s[0]:fatigue_s[0] + burst_duration_samples]
 time_middle = fatigue['t'][mid_start:mid_start + burst_duration_samples]
 time_end = fatigue['t'][fatigue_e[0] - burst_duration_samples:fatigue_e[0]]
 
+plt.ioff()
+
 # Plotten des gesamten EMG-Signals mit hervorgehobenen Intervallen
 plt.figure(figsize=(10, 6))
 plt.plot(fatigue['t'], fatigue_emg_filtered, label="Fatigue EMG (Filtered)")
@@ -125,11 +168,25 @@ plt.grid()
 plt.show()
 
 sfreq = 1000 # Hz
-fatigue_combi = np.concatenate((fatigue_start, fatigue_middle, fatigue_end))
 
-power = lf3.get_power(fatigue_combi, sfreq)
 
-#plot power
-plt.figure(figsize=(10, 6))
-plt.plot(power)
+power, frequency = lf3.get_power(fatigue_start, sfreq)
+power2, frequency2 = lf3.get_power(fatigue_middle, sfreq)
+power3, frequency3 = lf3.get_power(fatigue_end, sfreq)
+
+
+#Filtern: Tiefpass Grenzfrequenz 40 Hz
+b, a = sc.butter(4, 40/500, btype='lowpass')
+power_filtered = sc.filtfilt(b, a, power)
+power2_filtered = sc.filtfilt(b, a, power2)
+power3_filtered = sc.filtfilt(b, a, power3)
+
+fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(12, 6))
+axes[0].plot(frequency, power)
+axes[0].plot(frequency, power_filtered)
+axes[1].plot(frequency2, power2)
+axes[1].plot(frequency2, power2_filtered)
+axes[2].plot(frequency3, power3)
+axes[2].plot(frequency3, power3_filtered)
+fig.tight_layout()
 plt.show()
