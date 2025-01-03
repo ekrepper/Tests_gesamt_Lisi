@@ -14,15 +14,11 @@ mvc['t'] = mvc['t']/1000
 fatigue['t'] = fatigue['t']/1000
 
 
-#Offset im emg Datensatz entfernen --> ENTWEDER NOCH DYNAMISCH MACHEN; NICHT HARD GECODET
+#Offset im emg Datensatz entfernen --> NOCH DYNAMISCH MACHEN; NICHT HARD GECODET
 mvc_offsetclean = mvc['emg'] - 1485
 weights_offsetclean = weights['emg'] - 1480
 fatigue_offsetclean = fatigue['emg'] - 1490
 
-fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8, 4))
-axes[0].plot(mvc['t'], mvc['emg'])
-axes[1].plot(mvc['t'], mvc_offsetclean)
-fig.tight_layout()
 
 #Butterworth Filter (20 Hz bis 450 Hz) anwenden
 b, a = sc.butter(4, [20/500, 450/500], btype='bandpass')
@@ -31,20 +27,10 @@ weights_emg_filtered = sc.filtfilt(b, a, weights_offsetclean)
 fatigue_emg_filtered = sc.filtfilt(b, a, fatigue_offsetclean)
 
 
-fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8, 4))
-axes[0].plot(mvc['t'], mvc_offsetclean)
-axes[1].plot(mvc['t'], mvc_emg_filtered)
-fig.tight_layout()
-
 #Gleichrichten der Daten
 mvc_rectified = np.abs(mvc_emg_filtered)
 weights_rectified = np.abs(weights_emg_filtered)
 fatigue_rectified = np.abs(fatigue_emg_filtered)
-
-fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8, 4))
-axes[0].plot(mvc['t'], mvc_emg_filtered)
-axes[1].plot(mvc['t'], mvc_rectified)
-fig.tight_layout()
 
 #Einhüllende Bilden: Tiefpass Grenfrequenz 3 Hz 
 b, a = sc.butter(4, 3/500, btype='lowpass')
@@ -52,18 +38,54 @@ mvc_envelope = sc.filtfilt(b, a, mvc_rectified)
 weights_envelope = sc.filtfilt(b, a, weights_rectified)
 fatigue_envelope = sc.filtfilt(b, a, fatigue_rectified)
 
-fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(8, 4))
-axes[0].plot(mvc['t'], mvc_rectified)
-axes[1].plot(mvc['t'], mvc_envelope)
-fig.tight_layout()
+# MVC [emg] als einzelner Plot
+plt.figure(figsize=(10, 6))
+plt.plot(mvc['t'], mvc['emg'], label="Rohes Signal")
+#plt.title("MVC - Rohes EMG Signal")
+plt.ylabel("EMG / a.u.")
+plt.xlabel("Zeit / s")
+plt.legend()
+plt.grid()
 plt.show()
 
+# MVC - offsetbereinigt, gefiltert, gleichgerichtet, Einhüllende in einem 2x2 Subplot
+fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(12, 8))
 
-#Beschriftungen!
+# MVC - offsetbereinigt
+axes[0, 0].plot(mvc['t'], mvc_offsetclean, label="Offsetbereinigtes EMG-Signal", color='blue')
+axes[0, 0].set_title("MVC - Offsetbereinigt")
+axes[0, 0].set_xlabel("Zeit / s")
+axes[0, 0].set_ylabel("EMG / a.u.")
+axes[0, 0].grid()
+axes[0, 0].legend()
 
-#Interaktiv Start und Ende der MVC-Bursts bestimmen
-plt.ion()
-plt.plot(mvc['t'], mvc_emg_filtered)
+# MVC - gefiltert
+axes[0, 1].plot(mvc['t'], mvc_emg_filtered, label="Gefiltertes EMG-Signal", color='orange')
+axes[0, 1].set_title("MVC - Gefiltert")
+axes[0, 1].set_xlabel("Zeit / s")
+axes[0, 1].set_ylabel("EMG / a.u.")
+axes[0, 1].grid()
+axes[0, 1].legend()
+
+# MVC - gleichgerichtet
+axes[1, 0].plot(mvc['t'], mvc_rectified, label="Gleichgerichtetes EMG-Signal", color='green')
+axes[1, 0].set_title("MVC - Gleichgerichtet")
+axes[1, 0].set_xlabel("Zeit / s")
+axes[1, 0].set_ylabel("EMG / a.u.")
+axes[1, 0].grid()
+axes[1, 0].legend()
+
+# MVC - Einhüllende
+axes[1, 1].plot(mvc['t'], mvc_envelope, label="Einhüllende des EMG-Signals", color='red')
+axes[1, 1].set_title("MVC - Einhüllende")
+axes[1, 1].set_xlabel("Zeit / s")
+axes[1, 1].set_ylabel("EMG / a.u.")
+axes[1, 1].grid()
+axes[1, 1].legend()
+
+# Layout anpassen
+fig.tight_layout()
+plt.legend()
 plt.show()
 
 
@@ -77,6 +99,7 @@ files = {
     "fatigue_e": "fatigue_e.npy",
 }
 
+plt.ion()
 # Funktion zum Laden der Arrays
 def load_or_compute_bursts():
     # Prüfen, ob alle Dateien existieren
@@ -176,16 +199,19 @@ time_end3 = fatigue['t'][fatigue_e[2] - burst_duration_samples:fatigue_e[2]]
 
 plt.ioff()
 plt.figure(figsize=(10, 6))
-plt.plot(fatigue['t'], fatigue_emg_filtered, label="Fatigue EMG (Filtered)")
+plt.plot(fatigue['t'], fatigue_emg_filtered, label="Fatigue-Signal mit Burst-Markierungen")
 plt.plot(time_start, fatigue_start, 'r')
 plt.plot(time_middle, fatigue_middle, 'r')
 plt.plot(time_end, fatigue_end, 'r')
-plt.plot(time_start2, fatigue_start2, 'g')
-plt.plot(time_middle2, fatigue_middle2, 'g')
-plt.plot(time_end2, fatigue_end2, 'g')
-plt.plot(time_start3, fatigue_start3, 'b')
-plt.plot(time_middle3, fatigue_middle3, 'b')
-plt.plot(time_end3, fatigue_end3, 'b')
+plt.plot(time_start2, fatigue_start2, 'r')
+plt.plot(time_middle2, fatigue_middle2, 'r')
+plt.plot(time_end2, fatigue_end2, 'r')
+plt.plot(time_start3, fatigue_start3, 'r')
+plt.plot(time_middle3, fatigue_middle3, 'r')
+plt.plot(time_end3, fatigue_end3, 'r')
+plt.xlabel("Zeit / s")
+plt.ylabel("EMG / a.u.")
+plt.legend()
 plt.show()
 
 sfreq = 1000 # Hz
@@ -202,98 +228,116 @@ power3_start, frequency7 = lf3.get_power(fatigue_start3, sfreq)
 power3_middle, frequency8 = lf3.get_power(fatigue_middle3, sfreq)
 power3_end, frequency9 = lf3.get_power(fatigue_end3, sfreq)
 
-#Filtern: Tiefpass Grenzfrequenz 40 Hz
+# Filtern: Tiefpass Grenzfrequenz 40 Hz
 b, a = sc.butter(4, 40/500, btype='lowpass')
 powerstart_filtered = sc.filtfilt(b, a, power_start)
 powermid_filtered = sc.filtfilt(b, a, power_middle)
 powerend_filtered = sc.filtfilt(b, a, power_end)
 
-
-
-
-fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(12, 6))
-axes[0].plot(frequency, power_start)
-axes[0].plot(frequency, powerstart_filtered)
-axes[1].plot(frequency2, power_middle)
-axes[1].plot(frequency2, powermid_filtered)
-axes[2].plot(frequency3, power_end)
-axes[2].plot(frequency3, powerend_filtered)
-fig.tight_layout()
-plt.show()
-
-area_freq = cumulative_trapezoid(powerstart_filtered, frequency, initial=0)
-total_power = area_freq[-1]
-median_freq = frequency[np.where(area_freq >= total_power / 2)[0][0]]
-
-area_freq_mid = cumulative_trapezoid(power_middle, frequency2, initial=0)
-total_power_mid = area_freq_mid[-1]
-median_freq_mid = frequency4[np.where(area_freq_mid >= total_power_mid / 2)[0][0]]
-
-area_freq_end = cumulative_trapezoid(power2_end, frequency6, initial=0)
-total_power_end = area_freq_end[-1]
-median_freq_end = frequency3[np.where(area_freq_end >= total_power_end / 2)[0][0]]
-
-
-#plot power spectrum with median frequency
-plt.plot(frequency, powerstart_filtered, color='r')
-plt.plot(frequency2, powermid_filtered, color='g')
-plt.plot(frequency3, powerend_filtered, color='b')
-plt.axvline(median_freq, color='r')
-plt.axvline(median_freq_mid, color='g')
-plt.axvline(median_freq_end, color='b')
-plt.show()
-
 power2start_filtered = sc.filtfilt(b, a, power2_start)
 power2mid_filtered = sc.filtfilt(b, a, power2_middle)
 power2end_filtered = sc.filtfilt(b, a, power2_end)
-
-# Frequenzspektren für den zweiten Burst
-area_freq2_start = cumulative_trapezoid(power2_start, frequency4, initial=0)
-total_power2_start = area_freq2_start[-1]
-median_freq2_start = frequency4[np.where(area_freq2_start >= total_power2_start / 2)[0][0]]
-
-area_freq2_mid = cumulative_trapezoid(power2_middle, frequency5, initial=0)
-total_power2_mid = area_freq2_mid[-1]
-median_freq2_mid = frequency5[np.where(area_freq2_mid >= total_power2_mid / 2)[0][0]]
-
-area_freq2_end = cumulative_trapezoid(power2_end, frequency6, initial=0)
-total_power2_end = area_freq2_end[-1]
-median_freq2_end = frequency6[np.where(area_freq2_end >= total_power2_end / 2)[0][0]]
-
-#plot power spectrum with median frequency
-plt.plot(frequency4, power2start_filtered, color='r')
-plt.plot(frequency5, power2mid_filtered, color='g')
-plt.plot(frequency6, power2end_filtered, color='b')
-plt.axvline(median_freq2_start, color='r')
-plt.axvline(median_freq2_mid, color='g')
-plt.axvline(median_freq2_end, color='b')
-plt.show()
-
-# Frequenzspektren für den dritten Burst
-area_freq3_start = cumulative_trapezoid(power3_start, frequency7, initial=0)
-total_power3_start = area_freq3_start[-1]
-median_freq3_start = frequency7[np.where(area_freq3_start >= total_power3_start / 2)[0][0]]
-
-area_freq3_mid = cumulative_trapezoid(power3_middle, frequency8, initial=0)
-total_power3_mid = area_freq3_mid[-1]
-median_freq3_mid = frequency8[np.where(area_freq3_mid >= total_power3_mid / 2)[0][0]]
-
-area_freq3_end = cumulative_trapezoid(power3_end, frequency9, initial=0)
-total_power3_end = area_freq3_end[-1]
-median_freq3_end = frequency9[np.where(area_freq3_end >= total_power3_end / 2)[0][0]]
-
 
 power3start_filtered = sc.filtfilt(b, a, power3_start)
 power3mid_filtered = sc.filtfilt(b, a, power3_middle)
 power3end_filtered = sc.filtfilt(b, a, power3_end)
 
-#plot power spectrum with median frequency
-plt.plot(frequency7, power3start_filtered, color='r')
-plt.plot(frequency8, power3mid_filtered, color='g')
-plt.plot(frequency9, power3end_filtered, color='b')
-plt.axvline(median_freq3_start, color='r')
-plt.axvline(median_freq3_mid, color='g')
-plt.axvline(median_freq3_end, color='b')
+# Medianfrequenzen berechnen
+area_freq = cumulative_trapezoid(powerstart_filtered, frequency, initial=0)
+total_power = area_freq[-1]
+median_freq = frequency[np.where(area_freq >= total_power / 2)[0][0]]
+
+area_freq_mid = cumulative_trapezoid(powermid_filtered, frequency2, initial=0)
+total_power_mid = area_freq_mid[-1]
+median_freq_mid = frequency2[np.where(area_freq_mid >= total_power_mid / 2)[0][0]]
+
+area_freq_end = cumulative_trapezoid(powerend_filtered, frequency3, initial=0)
+total_power_end = area_freq_end[-1]
+median_freq_end = frequency3[np.where(area_freq_end >= total_power_end / 2)[0][0]]
+
+area_freq2_start = cumulative_trapezoid(power2start_filtered, frequency4, initial=0)
+total_power2_start = area_freq2_start[-1]
+median_freq2_start = frequency4[np.where(area_freq2_start >= total_power2_start / 2)[0][0]]
+
+area_freq2_mid = cumulative_trapezoid(power2mid_filtered, frequency5, initial=0)
+total_power2_mid = area_freq2_mid[-1]
+median_freq2_mid = frequency5[np.where(area_freq2_mid >= total_power2_mid / 2)[0][0]]
+
+area_freq2_end = cumulative_trapezoid(power2end_filtered, frequency6, initial=0)
+total_power2_end = area_freq2_end[-1]
+median_freq2_end = frequency6[np.where(area_freq2_end >= total_power2_end / 2)[0][0]]
+
+area_freq3_start = cumulative_trapezoid(power3start_filtered, frequency7, initial=0)
+total_power3_start = area_freq3_start[-1]
+median_freq3_start = frequency7[np.where(area_freq3_start >= total_power3_start / 2)[0][0]]
+
+area_freq3_mid = cumulative_trapezoid(power3mid_filtered, frequency8, initial=0)
+total_power3_mid = area_freq3_mid[-1]
+median_freq3_mid = frequency8[np.where(area_freq3_mid >= total_power3_mid / 2)[0][0]]
+
+area_freq3_end = cumulative_trapezoid(power3end_filtered, frequency9, initial=0)
+total_power3_end = area_freq3_end[-1]
+median_freq3_end = frequency9[np.where(area_freq3_end >= total_power3_end / 2)[0][0]]
+
+# Plot mit 3 Spalten und 1 Zeile
+fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(18, 6))
+
+# Burst 1
+axes[0].plot(frequency, powerstart_filtered, label="Burst 1 - Start", color='r')
+axes[0].plot(frequency2, powermid_filtered, label="Burst 1 - Mitte", color='g')
+axes[0].plot(frequency3, powerend_filtered, label="Burst 1 - Ende", color='b')
+axes[0].axvline(median_freq, color='r', linestyle='--')
+axes[0].axvline(median_freq_mid, color='g', linestyle='--')
+axes[0].axvline(median_freq_end, color='b', linestyle='--')
+axes[0].set_title("Burst 1")
+axes[0].set_xlabel("Frequenz / Hz")
+axes[0].set_ylabel("Leistung / a.u.")
+axes[0].legend()
+axes[0].grid()
+
+# Burst 2
+axes[1].plot(frequency4, power2start_filtered, label="Burst 2 - Start", color='r')
+axes[1].plot(frequency5, power2mid_filtered, label="Burst 2 - Mitte", color='g')
+axes[1].plot(frequency6, power2end_filtered, label="Burst 2 - Ende", color='b')
+axes[1].axvline(median_freq2_start, color='r', linestyle='--')
+axes[1].axvline(median_freq2_mid, color='g', linestyle='--')
+axes[1].axvline(median_freq2_end, color='b', linestyle='--')
+axes[1].set_title("Burst 2")
+axes[1].set_xlabel("Frequenz / Hz")
+axes[1].legend()
+axes[1].grid()
+
+# Burst 3
+axes[2].plot(frequency7, power3start_filtered, label="Burst 3 - Start", color='r')
+axes[2].plot(frequency8, power3mid_filtered, label="Burst 3 - Mitte", color='g')
+axes[2].plot(frequency9, power3end_filtered, label="Burst 3 - Ende", color='b')
+axes[2].axvline(median_freq3_start, color='r', linestyle='--')
+axes[2].axvline(median_freq3_mid, color='g', linestyle='--')
+axes[2].axvline(median_freq3_end, color='b', linestyle='--')
+axes[2].set_title("Burst 3")
+axes[2].set_xlabel("Frequenz / Hz")
+axes[2].legend()
+axes[2].grid()
+
+# Layout anpassen
+fig.tight_layout()
+plt.show()
+
+# Burst 1 - Mitte: Darstellung des rohen Leistungsspektrums, gefilterten Leistungsspektrums und der durchschnittlichen Frequenz
+plt.figure(figsize=(12, 6))
+plt.plot(frequency2, power_middle, label="Rohes Leistungsspektrum", color='blue')
+plt.plot(frequency2, powermid_filtered, label="Gefiltertes Leistungsspektrum", color='orange')
+
+# Durchschnittliche Frequenz berechnen
+average_frequency = np.average(frequency2, weights=powermid_filtered)
+plt.axvline(average_frequency, color='green', linestyle='--', label=f"Durchschnittliche Frequenz: {average_frequency:.2f} Hz")
+
+# Plot-Details
+#plt.title("Burst 1 - Mitte: Leistungsspektrum roh + gefiltert und Durchschnittliche Frequenz")
+plt.xlabel("Frequenz / Hz")
+plt.ylabel("Leistung / a.u.")
+plt.legend()
+plt.grid()
 plt.show()
 
 # Normalisierte relative Zeitpunkte für die Darstellung
@@ -323,9 +367,9 @@ for i in range(3):  # Für jeden Burst
     )
 
 # Achsentitel und Legende
-plt.xlabel("Time of Measurement (%)")
-plt.ylabel("Median Frequency (Hz)")
-plt.title("Change in Median Frequency Over Time for Fatigue Test")
+plt.xlabel("Zeitpunkt der Messung / %")
+plt.ylabel("Median-Frequenz / Hz")
+#plt.title("Change in Median Frequency Over Time for Fatigue Test")
 plt.legend()
 plt.grid()
 plt.show()
