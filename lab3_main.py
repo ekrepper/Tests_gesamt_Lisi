@@ -136,88 +136,162 @@ sampling_rate = 1000  # Hz
 # Isolieren von 0,5 Sekunden am Anfang, in der Mitte und am Ende der Fatigue-Bursts
 burst_duration_samples = int(0.5 * sampling_rate)  # 0.5 Sekunden in Samples
 
-# Anfang des Bursts
+# Anfang des 1. Bursts
 fatigue_start = fatigue_emg_filtered[fatigue_s[0]:fatigue_s[0] + burst_duration_samples]
+# Anfang des 2. Bursts
+fatigue_start2 = fatigue_emg_filtered[fatigue_s[1]:fatigue_s[1] + burst_duration_samples]
+# Anfang des 3. Bursts
+fatigue_start3 = fatigue_emg_filtered[fatigue_s[2]:fatigue_s[2] + burst_duration_samples]
 
-# Mitte des Bursts
+# Mitte des 1. Bursts
 mid_start = int((fatigue_s[0] + fatigue_e[0]) / 2 - burst_duration_samples / 2)
 fatigue_middle = fatigue_emg_filtered[mid_start:mid_start + burst_duration_samples]
+# Mitte des 2. Bursts
+mid_start2 = int((fatigue_s[1] + fatigue_e[1]) / 2 - burst_duration_samples / 2)
+fatigue_middle2 = fatigue_emg_filtered[mid_start2:mid_start2 + burst_duration_samples]
+# Mitte des 3. Bursts
+mid_start3 = int((fatigue_s[2] + fatigue_e[2]) / 2 - burst_duration_samples / 2)
+fatigue_middle3 = fatigue_emg_filtered[mid_start3:mid_start3 + burst_duration_samples]
 
-# Ende des Bursts
+# Ende des 1. Bursts
 fatigue_end = fatigue_emg_filtered[fatigue_e[0] - burst_duration_samples:fatigue_e[0]]
+# Ende des 2. Bursts
+fatigue_end2 = fatigue_emg_filtered[fatigue_e[1] - burst_duration_samples:fatigue_e[1]]
+# Ende des 3. Bursts
+fatigue_end3 = fatigue_emg_filtered[fatigue_e[2] - burst_duration_samples:fatigue_e[2]]
 
 # Zeitachsen für die roten Markierungen
 time_start = fatigue['t'][fatigue_s[0]:fatigue_s[0] + burst_duration_samples]
 time_middle = fatigue['t'][mid_start:mid_start + burst_duration_samples]
 time_end = fatigue['t'][fatigue_e[0] - burst_duration_samples:fatigue_e[0]]
 
-plt.ioff()
+time_start2 = fatigue['t'][fatigue_s[1]:fatigue_s[1] + burst_duration_samples]
+time_middle2 = fatigue['t'][mid_start2:mid_start2 + burst_duration_samples]
+time_end2 = fatigue['t'][fatigue_e[1] - burst_duration_samples:fatigue_e[1]]
 
-# Plotten des gesamten EMG-Signals mit hervorgehobenen Intervallen
+time_start3 = fatigue['t'][fatigue_s[2]:fatigue_s[2] + burst_duration_samples]
+time_middle3 = fatigue['t'][mid_start3:mid_start3 + burst_duration_samples]
+time_end3 = fatigue['t'][fatigue_e[2] - burst_duration_samples:fatigue_e[2]]
+
+
+plt.ioff()
 plt.figure(figsize=(10, 6))
 plt.plot(fatigue['t'], fatigue_emg_filtered, label="Fatigue EMG (Filtered)")
-plt.plot(time_start, fatigue_start, 'r', label="Start (0.5 s)")
-plt.plot(time_middle, fatigue_middle, 'r', label="Middle (0.5 s)")
-plt.plot(time_end, fatigue_end, 'r', label="End (0.5 s)")
-
-# Achsenbeschriftung und Legende
-plt.xlabel("Time (s)")
-plt.ylabel("EMG (a.u.)")
-plt.title("Fatigue Filtered EMG Burst Isolated")
-plt.legend()
-plt.grid()
+plt.plot(time_start, fatigue_start, 'r')
+plt.plot(time_middle, fatigue_middle, 'r')
+plt.plot(time_end, fatigue_end, 'r')
+plt.plot(time_start2, fatigue_start2, 'g')
+plt.plot(time_middle2, fatigue_middle2, 'g')
+plt.plot(time_end2, fatigue_end2, 'g')
+plt.plot(time_start3, fatigue_start3, 'b')
+plt.plot(time_middle3, fatigue_middle3, 'b')
+plt.plot(time_end3, fatigue_end3, 'b')
 plt.show()
 
 sfreq = 1000 # Hz
 
+power_start, frequency = lf3.get_power(fatigue_start, sfreq)
+power_middle, frequency2 = lf3.get_power(fatigue_middle, sfreq)
+power_end, frequency3 = lf3.get_power(fatigue_end, sfreq)
 
-power, frequency = lf3.get_power(fatigue_start, sfreq)
-power2, frequency2 = lf3.get_power(fatigue_middle, sfreq)
-power3, frequency3 = lf3.get_power(fatigue_end, sfreq)
+power2_start, frequency4 = lf3.get_power(fatigue_start2, sfreq)
+power2_middle, frequency5 = lf3.get_power(fatigue_middle2, sfreq)
+power2_end, frequency6 = lf3.get_power(fatigue_end2, sfreq)
 
+power3_start, frequency7 = lf3.get_power(fatigue_start3, sfreq)
+power3_middle, frequency8 = lf3.get_power(fatigue_middle3, sfreq)
+power3_end, frequency9 = lf3.get_power(fatigue_end3, sfreq)
 
 #Filtern: Tiefpass Grenzfrequenz 40 Hz
 b, a = sc.butter(4, 40/500, btype='lowpass')
-power_filtered = sc.filtfilt(b, a, power)
-power2_filtered = sc.filtfilt(b, a, power2)
-power3_filtered = sc.filtfilt(b, a, power3)
+powerstart_filtered = sc.filtfilt(b, a, power_start)
+powermid_filtered = sc.filtfilt(b, a, power_middle)
+powerend_filtered = sc.filtfilt(b, a, power_end)
+
+
+
 
 fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(12, 6))
-axes[0].plot(frequency, power)
-axes[0].plot(frequency, power_filtered)
-axes[1].plot(frequency2, power2)
-axes[1].plot(frequency2, power2_filtered)
-axes[2].plot(frequency3, power3)
-axes[2].plot(frequency3, power3_filtered)
+axes[0].plot(frequency, power_start)
+axes[0].plot(frequency, powerstart_filtered)
+axes[1].plot(frequency2, power_middle)
+axes[1].plot(frequency2, powermid_filtered)
+axes[2].plot(frequency3, power_end)
+axes[2].plot(frequency3, powerend_filtered)
 fig.tight_layout()
 plt.show()
 
-area_freq = cumulative_trapezoid(power_filtered, frequency, initial=0)
+area_freq = cumulative_trapezoid(powerstart_filtered, frequency, initial=0)
 total_power = area_freq[-1]
 median_freq = frequency[np.where(area_freq >= total_power / 2)[0][0]]
 
+area_freq_mid = cumulative_trapezoid(power_middle, frequency2, initial=0)
+total_power_mid = area_freq_mid[-1]
+median_freq_mid = frequency4[np.where(area_freq_mid >= total_power_mid / 2)[0][0]]
+
+area_freq_end = cumulative_trapezoid(power2_end, frequency6, initial=0)
+total_power_end = area_freq_end[-1]
+median_freq_end = frequency3[np.where(area_freq_end >= total_power_end / 2)[0][0]]
+
+
 #plot power spectrum with median frequency
-plt.plot(frequency, power_filtered)
+plt.plot(frequency, powerstart_filtered, color='r')
+plt.plot(frequency2, powermid_filtered, color='g')
+plt.plot(frequency3, powerend_filtered, color='b')
 plt.axvline(median_freq, color='r')
+plt.axvline(median_freq_mid, color='g')
+plt.axvline(median_freq_end, color='b')
 plt.show()
 
+power2start_filtered = sc.filtfilt(b, a, power2_start)
+power2mid_filtered = sc.filtfilt(b, a, power2_middle)
+power2end_filtered = sc.filtfilt(b, a, power2_end)
 
-area_freq2 = cumulative_trapezoid(power2_filtered, frequency2, initial=0)
-total_power2 = area_freq2[-1]
-median_freq2 = frequency2[np.where(area_freq2 >= total_power2 / 2)[0][0]]
+# Frequenzspektren für den zweiten Burst
+area_freq2_start = cumulative_trapezoid(power2_start, frequency4, initial=0)
+total_power2_start = area_freq2_start[-1]
+median_freq2_start = frequency4[np.where(area_freq2_start >= total_power2_start / 2)[0][0]]
 
+area_freq2_mid = cumulative_trapezoid(power2_middle, frequency5, initial=0)
+total_power2_mid = area_freq2_mid[-1]
+median_freq2_mid = frequency5[np.where(area_freq2_mid >= total_power2_mid / 2)[0][0]]
 
-area_freq3 = cumulative_trapezoid(power3_filtered, frequency3, initial=0)
-total_power3 = area_freq3[-1]
-median_freq3 = frequency3[np.where(area_freq3 >= total_power3 / 2)[0][0]]
+area_freq2_end = cumulative_trapezoid(power2_end, frequency6, initial=0)
+total_power2_end = area_freq2_end[-1]
+median_freq2_end = frequency6[np.where(area_freq2_end >= total_power2_end / 2)[0][0]]
 
-
-#plot power_filtered, power2_filtered, power3_filtered with median_freq, median_freq2, median_freq3 in one plot with different colors
-plt.plot(frequency, power_filtered, color='r')
-plt.axvline(median_freq, color='r')
-plt.plot(frequency2, power2_filtered, color='g')
-plt.axvline(median_freq2, color='g')
-plt.plot(frequency3, power3_filtered, color='b')
-plt.axvline(median_freq3, color='b')
+#plot power spectrum with median frequency
+plt.plot(frequency4, power2start_filtered, color='r')
+plt.plot(frequency5, power2mid_filtered, color='g')
+plt.plot(frequency6, power2end_filtered, color='b')
+plt.axvline(median_freq2_start, color='r')
+plt.axvline(median_freq2_mid, color='g')
+plt.axvline(median_freq2_end, color='b')
 plt.show()
 
+# Frequenzspektren für den dritten Burst
+area_freq3_start = cumulative_trapezoid(power3_start, frequency7, initial=0)
+total_power3_start = area_freq3_start[-1]
+median_freq3_start = frequency7[np.where(area_freq3_start >= total_power3_start / 2)[0][0]]
+
+area_freq3_mid = cumulative_trapezoid(power3_middle, frequency8, initial=0)
+total_power3_mid = area_freq3_mid[-1]
+median_freq3_mid = frequency8[np.where(area_freq3_mid >= total_power3_mid / 2)[0][0]]
+
+area_freq3_end = cumulative_trapezoid(power3_end, frequency9, initial=0)
+total_power3_end = area_freq3_end[-1]
+median_freq3_end = frequency9[np.where(area_freq3_end >= total_power3_end / 2)[0][0]]
+
+
+power3start_filtered = sc.filtfilt(b, a, power3_start)
+power3mid_filtered = sc.filtfilt(b, a, power3_middle)
+power3end_filtered = sc.filtfilt(b, a, power3_end)
+
+#plot power spectrum with median frequency
+plt.plot(frequency7, power3start_filtered, color='r')
+plt.plot(frequency8, power3mid_filtered, color='g')
+plt.plot(frequency9, power3end_filtered, color='b')
+plt.axvline(median_freq3_start, color='r')
+plt.axvline(median_freq3_mid, color='g')
+plt.axvline(median_freq3_end, color='b')
+plt.show()
