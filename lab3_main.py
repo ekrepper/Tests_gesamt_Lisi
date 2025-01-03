@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.signal as sc
+from scipy.integrate import cumulative_trapezoid
 import Lab3Functions as lf3
 import os
 
@@ -190,3 +191,33 @@ axes[2].plot(frequency3, power3)
 axes[2].plot(frequency3, power3_filtered)
 fig.tight_layout()
 plt.show()
+
+area_freq = cumulative_trapezoid(power_filtered, frequency, initial=0)
+total_power = area_freq[-1]
+median_freq = frequency[np.where(area_freq >= total_power / 2)[0][0]]
+
+#plot power spectrum with median frequency
+plt.plot(frequency, power_filtered)
+plt.axvline(median_freq, color='r')
+plt.show()
+
+
+area_freq2 = cumulative_trapezoid(power2_filtered, frequency2, initial=0)
+total_power2 = area_freq2[-1]
+median_freq2 = frequency2[np.where(area_freq2 >= total_power2 / 2)[0][0]]
+
+
+area_freq3 = cumulative_trapezoid(power3_filtered, frequency3, initial=0)
+total_power3 = area_freq3[-1]
+median_freq3 = frequency3[np.where(area_freq3 >= total_power3 / 2)[0][0]]
+
+
+#plot power_filtered, power2_filtered, power3_filtered with median_freq, median_freq2, median_freq3 in one plot with different colors
+plt.plot(frequency, power_filtered, color='r')
+plt.axvline(median_freq, color='r')
+plt.plot(frequency2, power2_filtered, color='g')
+plt.axvline(median_freq2, color='g')
+plt.plot(frequency3, power3_filtered, color='b')
+plt.axvline(median_freq3, color='b')
+plt.show()
+
