@@ -295,3 +295,37 @@ plt.axvline(median_freq3_start, color='r')
 plt.axvline(median_freq3_mid, color='g')
 plt.axvline(median_freq3_end, color='b')
 plt.show()
+
+# Normalisierte relative Zeitpunkte für die Darstellung
+time_points_pct = [0.1, 0.5, 0.9]  # Anfang, Mitte, Ende (in Prozent)
+
+# Medianfrequenzen der drei Bursts
+median_frequencies = [
+    [median_freq, median_freq_mid, median_freq_end],       # Burst 1
+    [median_freq2_start, median_freq2_mid, median_freq2_end],  # Burst 2
+    [median_freq3_start, median_freq3_mid, median_freq3_end]   # Burst 3
+]
+
+# Farben und Marker für die drei Bursts
+colors = ['red', 'green', 'blue']
+markers = ['o', 's', '^']
+
+# Plot erstellen
+plt.figure(figsize=(10, 6))
+for i in range(3):  # Für jeden Burst
+    plt.plot(
+        time_points_pct, 
+        median_frequencies[i], 
+        label=f'Burst {i+1}', 
+        color=colors[i], 
+        marker=markers[i], 
+        linestyle='-'
+    )
+
+# Achsentitel und Legende
+plt.xlabel("Time of Measurement (%)")
+plt.ylabel("Median Frequency (Hz)")
+plt.title("Change in Median Frequency Over Time for Fatigue Test")
+plt.legend()
+plt.grid()
+plt.show()
