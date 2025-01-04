@@ -135,7 +135,7 @@ mvc_s, mvc_e, weights_s, weights_e, fatigue_s, fatigue_e = load_or_compute_burst
 
 
 mvc_elisabeth = np.mean(np.mean(mvc_envelope[mvc_s[0]:mvc_e[0]]) + np.mean(mvc_envelope[mvc_s[1]:mvc_e[1]]) + np.mean(mvc_envelope[mvc_s[2]:mvc_e[2]]))
-print(mvc_elisabeth)
+print('MVC Elisabeth',mvc_elisabeth)
 
 
 #Berechnung der Mittelwerte der einzelnen Weight-Bursts in % des MVC
