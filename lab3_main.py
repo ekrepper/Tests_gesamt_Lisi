@@ -217,6 +217,7 @@ plt.show()
 
 sfreq = 1000 # Hz
 
+# Berechnung des Leistungsspektrums für die drei Abschnitte der Fatigue-Bursts
 power_start, frequency = lf3.get_power(fatigue_start, sfreq)
 power_middle, frequency2 = lf3.get_power(fatigue_middle, sfreq)
 power_end, frequency3 = lf3.get_power(fatigue_end, sfreq)
@@ -374,4 +375,5 @@ plt.ylabel("Median-Frequenz / Hz")
 #plt.title("Change in Median Frequency Over Time for Fatigue Test")
 plt.legend()
 plt.grid()
+plt.savefig("Plot-Experiment2-Median-Frequenz.svg", format="svg")
 plt.show()
