@@ -86,6 +86,7 @@ axes[1, 1].legend()
 # Layout anpassen
 fig.tight_layout()
 plt.legend()
+plt.savefig("Plots-Experiment1-MVC.svg", format="svg")
 plt.show()
 
 
@@ -216,6 +217,7 @@ plt.show()
 
 sfreq = 1000 # Hz
 
+# Berechnung des Leistungsspektrums für die drei Abschnitte der Fatigue-Bursts
 power_start, frequency = lf3.get_power(fatigue_start, sfreq)
 power_middle, frequency2 = lf3.get_power(fatigue_middle, sfreq)
 power_end, frequency3 = lf3.get_power(fatigue_end, sfreq)
@@ -326,11 +328,11 @@ plt.show()
 # Burst 1 - Mitte: Darstellung des rohen Leistungsspektrums, gefilterten Leistungsspektrums und der durchschnittlichen Frequenz
 plt.figure(figsize=(12, 6))
 plt.plot(frequency2, power_middle, label="Rohes Leistungsspektrum", color='blue')
-plt.plot(frequency2, powermid_filtered, label="Gefiltertes Leistungsspektrum", color='orange')
+plt.plot(frequency2, powermid_filtered, linestyle='--', label="Gefiltertes Leistungsspektrum", color='red')
 
 # Durchschnittliche Frequenz berechnen
 average_frequency = np.average(frequency2, weights=powermid_filtered)
-plt.axvline(average_frequency, color='green', linestyle='--', label=f"Durchschnittliche Frequenz: {average_frequency:.2f} Hz")
+plt.axvline(average_frequency, color='green', linestyle='-.', label=f"Durchschnittliche Frequenz: {average_frequency:.2f} Hz")
 
 # Plot-Details
 #plt.title("Burst 1 - Mitte: Leistungsspektrum roh + gefiltert und Durchschnittliche Frequenz")
@@ -338,6 +340,7 @@ plt.xlabel("Frequenz / Hz")
 plt.ylabel("Leistung / a.u.")
 plt.legend()
 plt.grid()
+plt.savefig("Plot-Experiment2-Relative-Muskelaktivierung.svg", format="svg")
 plt.show()
 
 # Normalisierte relative Zeitpunkte für die Darstellung
@@ -372,4 +375,5 @@ plt.ylabel("Median-Frequenz / Hz")
 #plt.title("Change in Median Frequency Over Time for Fatigue Test")
 plt.legend()
 plt.grid()
+plt.savefig("Plot-Experiment2-Median-Frequenz.svg", format="svg")
 plt.show()

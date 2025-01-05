@@ -68,4 +68,5 @@ mvc_s, mvc_e = load_or_compute_bursts()
 mvc_elisabeth = np.mean(np.mean(mvc_envelope[mvc_s[0]:mvc_e[0]]) + np.mean(mvc_envelope[mvc_s[1]:mvc_e[1]]) + np.mean(mvc_envelope[mvc_s[2]:mvc_e[2]]))
 print('MVC Elisabeth',mvc_elisabeth)
 
+
 #hier nur "mvc_greta = " / mvc_eda =" als Variablennamen nehmen und print('MVC Elisabeth',mvc_elisabeth) hier ändern, alle anderen variablen können gleich bleiben
