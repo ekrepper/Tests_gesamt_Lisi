@@ -144,7 +144,31 @@ weights_elisabeth = np.mean(weights_envelope[weights_s[0]:weights_e[0]])/mvc_eli
 weights_elisabeth2 = np.mean(weights_envelope[weights_s[1]:weights_e[1]])/mvc_elisabeth*100
 weights_elisabeth3 = np.mean(weights_envelope[weights_s[2]:weights_e[2]])/mvc_elisabeth*100
 
-print(weights_elisabeth, weights_elisabeth2, weights_elisabeth3)
+print("2.5 kg", weights_elisabeth, "5 kg", weights_elisabeth2, "10 kg", weights_elisabeth3)
+
+weights_elisabeth = [weights_elisabeth, weights_elisabeth2, weights_elisabeth3]  # Anteil % von MVC
+weights = [2.5, 5, 10]  # Gewichte in kg
+
+# Erstelle den Balkendiagramm
+fig, ax = plt.subplots(figsize=(8, 6))
+bars = ax.bar(weights, weights_elisabeth, label='Anteil % von MVC', color='lightblue')
+
+# Prozentsätze in den Balken anzeigen
+for bar, value in zip(bars, weights_elisabeth):
+    height = bar.get_height()
+    ax.text(bar.get_x() + bar.get_width() / 2, height / 2, f'{value:.1f}%', ha='center', va='center', fontsize=12, color='black')
+
+# Achsentitel und Beschriftungen
+ax.set_xlabel('Gewicht / kg')
+ax.set_ylabel('% von MVC')
+ax.set_xticks(weights)
+ax.set_ylim(0, 100)
+ax.grid()
+ax.legend()
+
+# Diagramm anzeigen
+plt.tight_layout()
+plt.show()
 
 #Berechnung der Mittelwerte der einzelnen Fatigue-Bursts in % des MVC
 fatigue_elisabeth = np.mean(fatigue_envelope[fatigue_s[0]:fatigue_e[0]])/mvc_elisabeth*100
@@ -363,7 +387,7 @@ for i in range(3):  # Für jeden Burst
     plt.plot(
         time_points_pct, 
         median_frequencies[i], 
-        label=f'Burst {i+1}', 
+        label=f'Versuch {i+1}', 
         color=colors[i], 
         marker=markers[i], 
         linestyle='-'
