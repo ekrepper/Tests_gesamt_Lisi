@@ -14,7 +14,7 @@ mvc['t'] = mvc['t']/1000
 print(mvc)
 
 #Offset im emg Datensatz entfernen --> NOCH DYNAMISCH MACHEN; NICHT HARD GECODET
-mvc_offsetclean = mvc['emg'] - 1460
+mvc_offsetclean = mvc['emg'] - np.mean(mvc['emg'])
 
 
 #Butterworth Filter (20 Hz bis 450 Hz) anwenden

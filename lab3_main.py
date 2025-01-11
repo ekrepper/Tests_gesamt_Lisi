@@ -14,15 +14,16 @@ mvc['t'] = mvc['t']/1000
 fatigue['t'] = fatigue['t']/1000
 
 
-#Offset im emg Datensatz entfernen --> NOCH DYNAMISCH MACHEN; NICHT HARD GECODET
-mvc_offsetclean = mvc['emg'] - 1485
-weights_offsetclean = weights['emg'] - 1480
-fatigue_offsetclean = fatigue['emg'] - 1490
+#Offset im emg Datensatz entfernen
+mvc_offsetclean = mvc['emg'] - np.mean(mvc['emg'])
+weights_offsetclean = weights['emg'] - np.mean(weights['emg'])
+fatigue_offsetclean = fatigue['emg'] - np.mean(fatigue['emg'])
 
 
 #Butterworth Filter (20 Hz bis 450 Hz) anwenden
 b, a = sc.butter(4, [20/500, 450/500], btype='bandpass')
 mvc_emg_filtered = sc.filtfilt(b, a, mvc_offsetclean)
+print("emg_filtered", mvc_emg_filtered)
 weights_emg_filtered = sc.filtfilt(b, a, weights_offsetclean)
 fatigue_emg_filtered = sc.filtfilt(b, a, fatigue_offsetclean)
 
@@ -60,7 +61,7 @@ axes[0, 0].grid()
 axes[0, 0].legend()
 
 # MVC - gefiltert
-axes[0, 1].plot(mvc['t'], mvc_emg_filtered, label="Gefiltertes EMG-Signal", color='orange')
+axes[0, 1].plot(mvc['t'], mvc_emg_filtered, label="Gefiltertes EMG-Signal", color='blue')
 axes[0, 1].set_title("MVC - Gefiltert")
 axes[0, 1].set_xlabel("Zeit / s")
 axes[0, 1].set_ylabel("EMG / a.u.")
@@ -68,7 +69,7 @@ axes[0, 1].grid()
 axes[0, 1].legend()
 
 # MVC - gleichgerichtet
-axes[1, 0].plot(mvc['t'], mvc_rectified, label="Gleichgerichtetes EMG-Signal", color='green')
+axes[1, 0].plot(mvc['t'], mvc_rectified, label="Gleichgerichtetes EMG-Signal", color='blue')
 axes[1, 0].set_title("MVC - Gleichgerichtet")
 axes[1, 0].set_xlabel("Zeit / s")
 axes[1, 0].set_ylabel("EMG / a.u.")
@@ -76,7 +77,7 @@ axes[1, 0].grid()
 axes[1, 0].legend()
 
 # MVC - Einhüllende
-axes[1, 1].plot(mvc['t'], mvc_envelope, label="Einhüllende des EMG-Signals", color='red')
+axes[1, 1].plot(mvc['t'], mvc_envelope, label="Einhüllende des EMG-Signals", color='blue')
 axes[1, 1].set_title("MVC - Einhüllende")
 axes[1, 1].set_xlabel("Zeit / s")
 axes[1, 1].set_ylabel("EMG / a.u.")
@@ -168,6 +169,7 @@ ax.legend()
 
 # Diagramm anzeigen
 plt.tight_layout()
+plt.savefig("Plot-Experiment2-Relative-Muskelaktivierung.svg", format="svg")
 plt.show()
 
 #Berechnung der Mittelwerte der einzelnen Fatigue-Bursts in % des MVC
@@ -225,15 +227,15 @@ time_end3 = fatigue['t'][fatigue_e[2] - burst_duration_samples:fatigue_e[2]]
 plt.ioff()
 plt.figure(figsize=(10, 6))
 plt.plot(fatigue['t'], fatigue_emg_filtered, label="Fatigue-Signal mit Burst-Markierungen")
-plt.plot(time_start, fatigue_start, 'r')
-plt.plot(time_middle, fatigue_middle, 'r')
-plt.plot(time_end, fatigue_end, 'r')
-plt.plot(time_start2, fatigue_start2, 'r')
-plt.plot(time_middle2, fatigue_middle2, 'r')
-plt.plot(time_end2, fatigue_end2, 'r')
-plt.plot(time_start3, fatigue_start3, 'r')
-plt.plot(time_middle3, fatigue_middle3, 'r')
-plt.plot(time_end3, fatigue_end3, 'r')
+plt.plot(time_start, fatigue_start, color='black')
+plt.plot(time_middle, fatigue_middle, color='black')
+plt.plot(time_end, fatigue_end, color='black')
+plt.plot(time_start2, fatigue_start2, color='black')
+plt.plot(time_middle2, fatigue_middle2, color='black')
+plt.plot(time_end2, fatigue_end2, color='black')
+plt.plot(time_start3, fatigue_start3, color='black')
+plt.plot(time_middle3, fatigue_middle3, color='black')
+plt.plot(time_end3, fatigue_end3, color='black')
 plt.xlabel("Zeit / s")
 plt.ylabel("EMG / a.u.")
 plt.legend()
@@ -364,7 +366,7 @@ plt.xlabel("Frequenz / Hz")
 plt.ylabel("Leistung / a.u.")
 plt.legend()
 plt.grid()
-plt.savefig("Plot-Experiment2-Relative-Muskelaktivierung.svg", format="svg")
+plt.savefig("Plot-Leistungsspektrum-Elisabeth.svg", format="svg")
 plt.show()
 
 # Normalisierte relative Zeitpunkte für die Darstellung
