@@ -351,6 +351,20 @@ axes[2].grid()
 fig.tight_layout()
 plt.show()
 
+#Burst 1 - Beginn: Darstellung des rohen Leistungsspektrums, gefilterten Leistungsspektrums und der durchschnittlichen Frequenz
+plt.figure(figsize=(12, 6))
+plt.plot(frequency, power_start, label="Rohes Leistungsspektrum", color='blue')
+plt.plot(frequency, powerstart_filtered, linestyle='--', label="Gefiltertes Leistungsspektrum", color='red')
+plt.title("Burst 1 - Start: Leistungsspektrum")
+average_frequency = np.average(frequency, weights=powerstart_filtered)
+plt.axvline(average_frequency, color='green', linestyle='-.', label=f"Durchschnittliche Frequenz: {average_frequency:.2f} Hz")
+plt.xlabel("Frequenz / Hz")
+plt.ylabel("Leistung / a.u.")
+plt.legend()
+plt.grid()
+#plt.savefig("Plot-Leistungsspektrum-Elisabeth.svg", format="svg")
+plt.show()
+
 # Burst 1 - Mitte: Darstellung des rohen Leistungsspektrums, gefilterten Leistungsspektrums und der durchschnittlichen Frequenz
 plt.figure(figsize=(12, 6))
 plt.plot(frequency2, power_middle, label="Rohes Leistungsspektrum", color='blue')
@@ -369,8 +383,153 @@ plt.grid()
 plt.savefig("Plot-Leistungsspektrum-Elisabeth.svg", format="svg")
 plt.show()
 
+# Burst 1 - Ende: Darstellung des rohen Leistungsspektrums, gefilterten Leistungsspektrums und der durchschnittlichen Frequenz
+plt.figure(figsize=(12, 6))
+plt.plot(frequency3, power_end, label="Rohes Leistungsspektrum", color='blue')
+plt.plot(frequency3, powerend_filtered, linestyle='--', label="Gefiltertes Leistungsspektrum", color='red')
+
+# Durchschnittliche Frequenz berechnen
+average_frequency = np.average(frequency3, weights=powerend_filtered)
+plt.axvline(average_frequency, color='green', linestyle='-.', label=f"Durchschnittliche Frequenz: {average_frequency:.2f} Hz")
+
+# Plot-Details
+#plt.title("Burst 1 - Ende: Leistungsspektrum roh + gefiltert und Durchschnittliche Frequenz")
+plt.xlabel("Frequenz / Hz")
+plt.ylabel("Leistung / a.u.")
+plt.legend()
+plt.grid()
+#plt.savefig("Plot-Leistungsspektrum-Elisabeth.svg", format="svg")
+plt.show()
+
+#Burst 2 - Beginn: Darstellung des rohen Leistungsspektrums, gefilterten Leistungsspektrums und der durchschnittlichen Frequenz
+plt.figure(figsize=(12, 6))
+plt.plot(frequency4, power2_start, label="Rohes Leistungsspektrum", color='blue')
+plt.plot(frequency4, power2start_filtered, linestyle='--', label="Gefiltertes Leistungsspektrum", color='red')
+plt.title("Burst 2 - Start: Leistungsspektrum")
+average_frequency = np.average(frequency4, weights=power2start_filtered)
+plt.axvline(average_frequency, color='green', linestyle='-.', label=f"Durchschnittliche Frequenz: {average_frequency:.2f} Hz")
+plt.xlabel("Frequenz / Hz")
+plt.ylabel("Leistung / a.u.")
+plt.legend()
+plt.grid()
+#plt.savefig("Plot-Leistungsspektrum-Elisabeth.svg", format="svg")
+plt.show()
+
+# Burst 2 - Mitte: Darstellung des rohen Leistungsspektrums, gefilterten Leistungsspektrums und der durchschnittlichen Frequenz
+plt.figure(figsize=(12, 6))
+plt.plot(frequency5, power2_middle, label="Rohes Leistungsspektrum", color='blue')
+plt.plot(frequency5, power2mid_filtered, linestyle='--', label="Gefiltertes Leistungsspektrum", color='red')
+average_frequency = np.average(frequency5, weights=power2mid_filtered)
+plt.axvline(average_frequency, color='green', linestyle='-.', label=f"Durchschnittliche Frequenz: {average_frequency:.2f} Hz")
+plt.title("Burst 2 - Mitte: Leistungsspektrum roh + gefiltert und Durchschnittliche Frequenz")
+plt.xlabel("Frequenz / Hz")
+plt.ylabel("Leistung / a.u.")
+plt.legend()
+plt.grid()
+#plt.savefig("Plot-Leistungsspektrum-Elisabeth.svg", format="svg")
+plt.show()
+
+# Burst 2 - Ende: Darstellung des rohen Leistungsspektrums, gefilterten Leistungsspektrums und der durchschnittlichen Frequenz
+plt.figure(figsize=(12, 6))
+plt.plot(frequency6, power2_end, label="Rohes Leistungsspektrum", color='blue')
+plt.plot(frequency6, power2end_filtered, linestyle='--', label="Gefiltertes Leistungsspektrum", color='red')
+average_frequency = np.average(frequency6, weights=power2end_filtered)
+plt.axvline(average_frequency, color='green', linestyle='-.', label=f"Durchschnittliche Frequenz: {average_frequency:.2f} Hz")
+plt.title("Burst 2 - Ende: Leistungsspektrum roh + gefiltert und Durchschnittliche Frequenz")
+plt.xlabel("Frequenz / Hz")
+plt.ylabel("Leistung / a.u.")
+plt.legend()
+plt.grid()
+#plt.savefig("Plot-Leistungsspektrum-Elisabeth.svg", format="svg")
+plt.show()
+
+#Burst 3 - Beginn: Darstellung des rohen Leistungsspektrums, gefilterten Leistungsspektrums und der durchschnittlichen Frequenz
+plt.figure(figsize=(12, 6))
+plt.plot(frequency7, power3_start, label="Rohes Leistungsspektrum", color='blue')
+plt.plot(frequency7, power3start_filtered, linestyle='--', label="Gefiltertes Leistungsspektrum", color='red')
+plt.title("Burst 3 - Start: Leistungsspektrum")
+average_frequency1 = np.average(frequency7, weights=power3start_filtered)
+plt.axvline(average_frequency1, color='green', linestyle='-.', label=f"Durchschnittliche Frequenz: {average_frequency1:.2f} Hz")
+plt.xlabel("Frequenz / Hz")
+plt.ylabel("Leistung / a.u.")
+plt.legend()
+plt.grid()
+#plt.savefig("Plot-Leistungsspektrum-Elisabeth.svg", format="svg")
+plt.show()
+
+# Burst 3 - Mitte: Darstellung des rohen Leistungsspektrums, gefilterten Leistungsspektrums und der durchschnittlichen Frequenz
+plt.figure(figsize=(12, 6))
+plt.plot(frequency8, power3_middle, label="Rohes Leistungsspektrum", color='blue')
+plt.plot(frequency8, power3mid_filtered, linestyle='--', label="Gefiltertes Leistungsspektrum", color='red')
+average_frequency2 = np.average(frequency8, weights=power3mid_filtered)
+plt.axvline(average_frequency2, color='green', linestyle='-.', label=f"Durchschnittliche Frequenz: {average_frequency2:.2f} Hz")
+plt.title("Burst 3 - Mitte: Leistungsspektrum roh + gefiltert und Durchschnittliche Frequenz")
+plt.xlabel("Frequenz / Hz")
+plt.ylabel("Leistung / a.u.")
+plt.legend()
+plt.grid()
+#plt.savefig("Plot-Leistungsspektrum-Elisabeth.svg", format="svg")
+plt.show()
+
+# Burst 3 - Ende: Darstellung des rohen Leistungsspektrums, gefilterten Leistungsspektrums und der durchschnittlichen Frequenz
+plt.figure(figsize=(12, 6))
+plt.plot(frequency9, power3_end, label="Rohes Leistungsspektrum", color='blue')
+plt.plot(frequency9, power3end_filtered, linestyle='--', label="Gefiltertes Leistungsspektrum", color='red')
+average_frequency3 = np.average(frequency9, weights=power3end_filtered)
+plt.axvline(average_frequency3, color='green', linestyle='-.', label=f"Durchschnittliche Frequenz: {average_frequency3:.2f} Hz")
+plt.title("Burst 3 - Ende: Leistungsspektrum roh + gefiltert und Durchschnittliche Frequenz")
+plt.xlabel("Frequenz / Hz")
+plt.ylabel("Leistung / a.u.")
+plt.legend()
+plt.grid()
+#plt.savefig("Plot-Leistungsspektrum-Elisabeth.svg", format="svg")
+plt.show()
+
+# Plot mit einer Zeile und 3 Spalten: Burst 3 Beginn Mitte Ende plus average_frequency1, average_frequency2 und average_frequency3 als vertikale Linien
+fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(18, 6))
+
+# Burst 3 - Start
+axes[0].plot(frequency7, power3_start, label="Rohes Leistungsspektrum", color='blue')
+axes[0].plot(frequency7, power3start_filtered, linestyle='--', label="Gefiltertes Leistungsspektrum", color='red')
+axes[0].axvline(average_frequency1, color='green', linestyle='-.', label=f"Durchschnittliche Frequenz: {average_frequency1:.2f} Hz")
+axes[0].set_title("Burst 3 - Start")
+axes[0].set_xlabel("Frequenz / Hz")
+axes[0].set_ylabel("Leistung / a.u.")
+axes[0].legend()
+axes[0].grid()
+
+# Burst 3 - Mitte
+axes[1].plot(frequency8, power3_middle, label="Rohes Leistungsspektrum", color='blue')
+axes[1].plot(frequency8, power3mid_filtered, linestyle='--', label="Gefiltertes Leistungsspektrum", color='red')
+axes[1].axvline(average_frequency2, color='green', linestyle='-.', label=f"Durchschnittliche Frequenz: {average_frequency2:.2f} Hz")
+axes[1].set_title("Burst 3 - Mitte")
+axes[1].set_xlabel("Frequenz / Hz")
+axes[1].legend()
+axes[1].grid()
+
+# Burst 3 - Ende
+axes[2].plot(frequency9, power3_end, label="Rohes Leistungsspektrum", color='blue')
+axes[2].plot(frequency9, power3end_filtered, linestyle='--', label="Gefiltertes Leistungsspektrum", color='red')
+axes[2].axvline(average_frequency3, color='green', linestyle='-.', label=f"Durchschnittliche Frequenz: {average_frequency3:.2f} Hz")
+axes[2].set_title("Burst 3 - Ende")
+axes[2].set_xlabel("Frequenz / Hz")
+axes[2].legend()
+axes[2].grid()
+
+# Layout anpassen
+fig.tight_layout()
+plt.savefig("Plot-Leistungsspektrum-Elisabeth-Ermuedungfreq.svg", format="svg")
+plt.show()
+
+
+
+
+
+
+
+
 # Normalisierte relative Zeitpunkte für die Darstellung
-time_points_pct = [0.1, 0.5, 0.9]  # Anfang, Mitte, Ende (in Prozent)
+time_points_pct = [10, 50, 90]  # Anfang, Mitte, Ende (in Prozent)
 
 # Medianfrequenzen der drei Bursts
 median_frequencies = [
